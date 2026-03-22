@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<title>InvoicePro — لوحة الأدمن</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=JetBrains+Mono&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0B1120;--s1:#111827;--s2:#1F2937;--b:#374151;--blue:#3B82F6;--green:#10B981;--red:#EF4444;--amber:#F59E0B;--text:#F9FAFB;--t2:#9CA3AF;--t3:#6B7280;--mono:'JetBrains Mono',monospace}
+body{background:var(--bg);color:var(--text);font-family:'Cairo',sans-serif;min-height:100vh;padding:24px}
+h1{font-size:20px;font-weight:700;color:var(--blue);margin-bottom:4px}
+.sub{font-size:12px;color:var(--t3);margin-bottom:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.card{background:var(--s1);border:1px solid var(--b);border-radius:12px;padding:20px}
+.card-t{font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+label{font-size:11px;color:var(--t3);display:block;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+input,select{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:8px 12px;color:var(--text);font-size:13px;font-family:inherit;width:100%;margin-bottom:12px;outline:none}
+input:focus,select:focus{border-color:var(--blue)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{padding:9px 18px;border-radius:8px;border:none;cursor:pointer;font-size:13px;font-weight:600;font-family:inherit;transition:all .15s;width:100%}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#2563EB}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#059669}
+.btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#DC2626}
+.btn-ghost{background:rgba(255,255,255,.06);color:var(--t2)}.btn-ghost:hover{background:rgba(255,255,255,.1);color:var(--text)}
+.output{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:14px;font-family:var(--mono);font-size:12px;color:var(--green);word-break:break-all;min-height:48px;position:relative;margin-top:10px}
+.output.err{color:var(--red)}.output.info{color:var(--blue)}
+.copy-btn{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.08);border:none;color:var(--t2);padding:3px 8px;border-radius:5px;font-size:10px;cursor:pointer;font-family:inherit}
+.copy-btn:hover{color:var(--text)}
+.table{width:100%;border-collapse:collapse;font-size:12px}
+.table th{text-align:right;padding:8px 10px;background:var(--s2);color:var(--t3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.table td{padding:8px 10px;border-bottom:1px solid var(--b);color:var(--t2);word-break:break-all}
+.table tr:hover td{background:rgba(255,255,255,.02)}
+.badge{display:inline-flex;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700}
+.b-ok{background:rgba(16,185,129,.15);color:var(--green)}
+.b-err{background:rgba(239,68,68,.15);color:var(--red)}
+.b-warn{background:rgba(245,158,11,.15);color:var(--amber)}
+.b-blue{background:rgba(59,130,246,.15);color:var(--blue)}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:14px}
+.stat-v{font-size:24px;font-weight:700;margin-bottom:3px}
+.stat-l{font-size:11px;color:var(--t3)}
+.tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--s2);border-radius:8px;padding:3px}
+.tab{padding:6px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;color:var(--t3);transition:all .15s}
+.tab.active{background:var(--s1);color:var(--text)}
+.sec{display:none}.sec.active{display:block}
+.cfg-row{background:var(--s2);border:1px solid var(--b);border-radius:8px;padding:12px;margin-bottom:8px}
+.cfg-l{font-size:11px;color:var(--t3);margin-bottom:4px}
+.cfg-v{font-family:var(--mono);font-size:12px;color:var(--amber)}
+input[type="number"]{-moz-appearance:textfield}
+input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none}
+</style>
+</head>
+<body>
+
+<h1>🔑 InvoicePro License Server Admin</h1>
+<div class="sub">إدارة التراخيص — اتصل بالسيرفر لكل العمليات</div>
+
+<div style="background:var(--s1);border:1px solid var(--b);border-radius:10px;padding:14px;margin-bottom:20px;display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+  <div style="flex:1;min-width:200px">
+    <label>عنوان السيرفر (Server URL)</label>
+    <input id="srv_url" value="http://localhost:3000" placeholder="https://your-server.com"/>
+  </div>
+  <div style="min-width:200px">
+    <label>Admin Token</label>
+    <input id="srv_token" type="password" value="change-admin-token-2026"/>
+  </div>
+  <button class="btn btn-ghost" style="width:120px;margin-top:16px" onclick="testConn()">🔌 اختبار</button>
+  <span id="conn_status" style="font-size:12px;color:var(--t3)">—</span>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('gen')">➕ توليد مفتاح</div>
+  <div class="tab" onclick="showTab('keys')">📋 المفاتيح</div>
+  <div class="tab" onclick="showTab('audit')">📊 الإحصائيات</div>
+</div>
+
+<div class="sec active" id="sec-gen">
+  <div class="grid">
+    <div class="card">
+      <div class="card-t">➕ مفتاح جديد</div>
+      <label>اسم العميل</label><input id="g_name" placeholder="محل النجم للتجارة"/>
+      <label>البريد الإلكتروني</label><input id="g_email" placeholder="client@example.com"/>
+      <div class="row">
+        <div>
+          <label>الطبقة</label>
+          <select id="g_tier">
+            <option value="trial">تجريبي — 15 فاتورة</option>
+            <option value="starter">مبتدئ — 200 فاتورة</option>
+            <option value="professional" selected>احترافي — غير محدود</option>
+            <option value="enterprise">مؤسسي — غير محدود</option>
+          </select>
+        </div>
+        <div>
+          <label>المدة (أيام)</label>
+          <input id="g_days" type="number" value="365" min="1"/>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>حد الفواتير (اختياري)</label>
+          <input id="g_invlimit" type="number" placeholder="افتراضي"/>
+        </div>
+        <div>
+          <label>ملاحظات داخلية</label>
+          <input id="g_notes" placeholder="طلب #123..."/>
+        </div>
+      </div>
+      <button class="btn btn-blue" onclick="generateKey()">⚡ توليد المفتاح</button>
+      <div id="gen_out" class="output" style="display:none">
+        <button class="copy-btn" onclick="copyEl('gen_out_key')">نسخ</button>
+        <span id="gen_out_key"></span>
+      </div>
+      <div id="gen_meta" style="font-size:11px;color:var(--t3);margin-top:8px;line-height:2"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-t">🔍 تحقق من مفتاح / إلغاء</div>
+      <label>المفتاح</label>
+      <input id="v_key" placeholder="XXXXXXXX-XXXXXXXX-XXXXXXXX-XXXXXXXX" style="font-family:var(--mono);font-size:12px"/>
+      <button class="btn btn-ghost" style="margin-bottom:8px" onclick="checkKey()">🔍 تحقق</button>
+      <button class="btn btn-red" style="margin-bottom:8px" onclick="revokeKey()">🚫 إلغاء الترخيص</button>
+      <button class="btn btn-ghost" onclick="resetMachines()">🔄 إعادة تعيين الأجهزة</button>
+      <div id="v_out" class="output" style="display:none;margin-top:10px;font-size:11px"></div>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="sec-keys">
+  <div style="display:flex;gap:10px;margin-bottom:14px">
+    <button class="btn btn-ghost" style="width:150px" onclick="loadKeys()">🔄 تحديث القائمة</button>
+    <button class="btn btn-ghost" style="width:150px" onclick="exportKeys()">⬇ تصدير CSV</button>
+  </div>
+  <div style="overflow:auto;border:1px solid var(--b);border-radius:10px;max-height:500px">
+    <table class="table" id="keys_table">
+      <thead><tr>
+        <th>#</th><th>المفتاح</th><th>العميل</th><th>الطبقة</th>
+        <th>الانتهاء</th><th>الأجهزة</th><th>الحالة</th><th>إجراءات</th>
+      </tr></thead>
+      <tbody id="keys_body"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--t3)">اضغط "تحديث القائمة"</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="sec" id="sec-audit">
+  <div class="stat-row" id="stats_row">
+    <div class="stat"><div class="stat-v" style="color:var(--blue)">—</div><div class="stat-l">إجمالي المفاتيح</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--green)">—</div><div class="stat-l">مفعّلة</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--red)">—</div><div class="stat-l">ملغاة</div></div>
+    <div class="stat"><div class="stat-v" style="color:var(--amber)">—</div><div class="stat-l">منتهية</div></div>
+  </div>
+  <button class="btn btn-ghost" style="width:150px;margin-bottom:14px" onclick="loadStats()">🔄 تحديث</button>
+  <div style="overflow:auto;border:1px solid var(--b);border-radius:10px;max-height:400px">
+    <table class="table">
+      <thead><tr><th>الوقت</th><th>الحدث</th><th>المفتاح</th><th>الجهاز</th><th>التفاصيل</th></tr></thead>
+      <tbody id="audit_body"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--t3)">اضغط تحديث</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let keysCache = [];
+
+function srv()   { return document.getElementById('srv_url').value.trim().replace(/\/$/,''); }
+function token() { return document.getElementById('srv_token').value.trim(); }
+function headers() { return { 'Content-Type':'application/json', 'x-admin-token': token() }; }
+
+function showTab(id) {
+  document.querySelectorAll('.tab,.sec').forEach(e=>e.classList.remove('active'));
+  document.querySelector(`[onclick="showTab('${id}')"]`).classList.add('active');
+  document.getElementById('sec-'+id).classList.add('active');
+}
+
+async function api(method, path, body) {
+  const r = await fetch(srv()+path, { method, headers: headers(), body: body ? JSON.stringify(body) : undefined });
+  return r.json();
+}
+
+async function testConn() {
+  try {
+    const r = await fetch(srv()+'/api/health');
+    const d = await r.json();
+    document.getElementById('conn_status').textContent = '✅ متصل — '+d.ts;
+    document.getElementById('conn_status').style.color = '#10B981';
+  } catch(e) {
+    document.getElementById('conn_status').textContent = '❌ لا يوجد اتصال';
+    document.getElementById('conn_status').style.color = '#EF4444';
+  }
+}
+
+async function generateKey() {
+  const body = {
+    tier:          document.getElementById('g_tier').value,
+    durationDays:  +document.getElementById('g_days').value || 365,
+    clientName:    document.getElementById('g_name').value,
+    clientEmail:   document.getElementById('g_email').value,
+    notes:         document.getElementById('g_notes').value,
+  };
+  const invLim = document.getElementById('g_invlimit').value;
+  if (invLim) body.invoicesLimit = +invLim;
+
+  try {
+    const r = await api('POST', '/admin/generate', body);
+    const out = document.getElementById('gen_out');
+    const outKey = document.getElementById('gen_out_key');
+    out.style.display = 'block';
+    if (r.ok) {
+      out.className = 'output';
+      outKey.textContent = r.key;
+      const exp = new Date(r.expiresAt).toLocaleDateString('ar-DZ');
+      document.getElementById('gen_meta').innerHTML = `
+        الطبقة: <strong style="color:#F9FAFB">${r.tierLabel ?? r.tier}</strong> &nbsp;|&nbsp;
+        الانتهاء: <strong style="color:#F9FAFB">${exp}</strong> &nbsp;|&nbsp;
+        العميل: ${body.clientName || '—'}
+      `;
+    } else {
+      out.className = 'output err';
+      outKey.textContent = r.error || 'خطأ';
+    }
+  } catch(e) {
+    alert('تعذر الاتصال بالسيرفر: '+e.message);
+  }
+}
+
+function copyEl(id) {
+  const t = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent='✓'; setTimeout(()=>btn.textContent='نسخ',2000);
+  });
+}
+
+async function checkKey() {
+  const key = document.getElementById('v_key').value.trim();
+  if (!key) return alert('أدخل المفتاح');
+  const r = await api('GET', `/admin/keys`);
+  const out = document.getElementById('v_out');
+  out.style.display = 'block';
+  if (r.ok) {
+    const found = r.keys.find(k=>k.key===key);
+    if (!found) { out.className='output err'; out.textContent='مفتاح غير موجود'; return; }
+    out.className = 'output info';
+    out.innerHTML = `<pre style="white-space:pre-wrap">${JSON.stringify(found, null, 2)}</pre>`;
+  }
+}
+
+async function revokeKey() {
+  const key = document.getElementById('v_key').value.trim();
+  if (!key || !confirm('إلغاء المفتاح: '+key+'؟')) return;
+  const r = await api('POST', '/admin/revoke', { key });
+  const out = document.getElementById('v_out');
+  out.style.display = 'block';
+  out.className = r.ok ? 'output' : 'output err';
+  out.textContent = r.ok ? '✓ تم إلغاء المفتاح' : r.error;
+}
+
+async function resetMachines() {
+  const key = document.getElementById('v_key').value.trim();
+  if (!key || !confirm('إعادة تعيين الأجهزة للمفتاح: '+key+'؟')) return;
+  const r = await api('POST', '/admin/reset-machines', { key });
+  const out = document.getElementById('v_out');
+  out.style.display = 'block';
+  out.className = r.ok ? 'output' : 'output err';
+  out.textContent = r.ok ? '✓ تم إعادة التعيين' : r.error;
+}
+
+async function loadKeys() {
+  const r = await api('GET', '/admin/keys');
+  if (!r.ok) return alert('خطأ: '+r.error);
+  keysCache = r.keys;
+  const tbody = document.getElementById('keys_body');
+  const tierLabels = { trial:'تجريبي', starter:'مبتدئ', professional:'احترافي', enterprise:'مؤسسي' };
+  tbody.innerHTML = r.keys.map((k,i) => {
+    const exp = new Date(k.expiresAt);
+    const expired = exp < new Date();
+    const status = k.revoked ? 'ملغى' : expired ? 'منتهي' : 'فعّال';
+    const statusCls = k.revoked ? 'b-err' : expired ? 'b-warn' : 'b-ok';
+    return `<tr>
+      <td>${i+1}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px">${k.key}</td>
+      <td>${k.clientName||'—'}<br><span style="font-size:10px;color:#6B7280">${k.clientEmail||''}</span></td>
+      <td><span class="badge b-blue">${tierLabels[k.tier]||k.tier}</span></td>
+      <td style="font-size:11px">${exp.toLocaleDateString('ar-DZ')}</td>
+      <td>${(k.machines||[]).length} / ${k.maxMachines}</td>
+      <td><span class="badge ${statusCls}">${status}</span></td>
+      <td style="display:flex;gap:4px">
+        <button class="btn btn-ghost" style="padding:4px 8px;font-size:10px;width:auto" onclick="quickCopy('${k.key}')">نسخ</button>
+        ${!k.revoked?`<button class="btn" style="background:rgba(239,68,68,.15);color:#EF4444;padding:4px 8px;font-size:10px;width:auto;border:none;border-radius:5px;cursor:pointer" onclick="quickRevoke('${k.key}')">إلغاء</button>`:''}
+      </td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:16px;color:#6B7280">لا توجد مفاتيح</td></tr>';
+}
+
+function quickCopy(key) { navigator.clipboard.writeText(key).then(()=>alert('✓ تم نسخ المفتاح')); }
+async function quickRevoke(key) {
+  if (!confirm('إلغاء: '+key+'؟')) return;
+  const r = await api('POST', '/admin/revoke', { key });
+  if (r.ok) { alert('✓ تم'); loadKeys(); } else alert('خطأ: '+r.error);
+}
+
+function exportKeys() {
+  if (!keysCache.length) { alert('حمّل القائمة أولاً'); return; }
+  const rows = [['المفتاح','العميل','البريد','الطبقة','الانتهاء','الحالة']];
+  keysCache.forEach(k=>rows.push([k.key,k.clientName||'',k.clientEmail||'',k.tier,k.expiresAt,k.revoked?'ملغى':'فعّال']));
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv'}));
+  a.download='licenses.csv'; a.click();
+}
+
+async function loadStats() {
+  const r = await api('GET', '/admin/stats');
+  if (!r.ok) return;
+  const sv = document.querySelectorAll('#stats_row .stat-v');
+  sv[0].textContent = r.total; sv[1].textContent = r.active;
+  sv[2].textContent = r.revoked; sv[3].textContent = r.expired;
+
+  const ra = await api('GET', '/admin/audit');
+  const tbody = document.getElementById('audit_body');
+  if (ra.ok) {
+    tbody.innerHTML = ra.audit.slice(0,50).map(e=>`<tr>
+      <td style="font-size:10px;white-space:nowrap">${new Date(e.ts).toLocaleString('ar-DZ')}</td>
+      <td><span class="badge ${e.event.includes('FAIL')||e.event.includes('TAMPER')?'b-err':e.event.includes('REVOK')?'b-warn':'b-ok'}">${e.event}</span></td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:10px">${e.keyId?.slice(0,12)||'—'}</td>
+      <td style="font-size:10px">${e.machineId?.slice(0,12)||'—'}</td>
+      <td style="font-size:11px">${e.detail}</td>
+    </tr>`).join('');
+  }
+}
+
+testConn();
+</script>
+</body>
+</html>
